@@ -1,0 +1,26 @@
+{
+  "name": "mk",
+  "version": "0.1.0",
+  "description": "A Node CLI scaffolding tool.",
+  "bin": {
+    "mk": "mk.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wpscholar/mk.git"
+  },
+  "author": "Micah Wood <micah@wpscholar.com> (http://wpscholar.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wpscholar/mk/issues"
+  },
+  "homepage": "https://github.com/wpscholar/mk#readme",
+  "dependencies": {
+    "find-up": "^2.1.0",
+    "fs": "0.0.1-security",
+    "yargs": "^9.0.1"
+  }
+}
