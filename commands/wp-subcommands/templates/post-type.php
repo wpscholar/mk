@@ -5,15 +5,15 @@ namespace {{namespace}};
 {{/namespace}}
 
 /**
- * Class {{PluralName}}
+ * Class {{className}}
 {{#namespace}}
  *
  * @package {{namespace}}
 {{/namespace}}
  */
-class {{PluralName}} {
+class {{className}} {
 
-	const POST_TYPE = '{{postTypePrefix}}{{_singular_name_}}';
+	const POST_TYPE = '{{postTypeName}}';
 
 	/**
 	 * Setup hooks
@@ -29,19 +29,19 @@ class {{PluralName}} {
 
 		$args = [
 			'labels'       => [
-				'name'               => esc_html_x( '{{Plural_Name}}', 'post type general name', '{{textDomain}}' ),
-				'singular_name'      => esc_html_x( '{{Singular_Name}}', 'post type singular name', '{{textDomain}}' ),
-				'menu_name'          => esc_html_x( '{{Plural_Name}}', 'admin menu', '{{textDomain}}' ),
-				'name_admin_bar'     => esc_html_x( '{{Singular_Name}}', 'add new on admin bar', '{{textDomain}}' ),
-				'add_new_item'       => esc_html__( 'Add New {{Singular_Name}}', '{{textDomain}}' ),
-				'new_item'           => esc_html__( 'New {{Singular_Name}}', '{{textDomain}}' ),
-				'edit_item'          => esc_html__( 'Edit {{Singular_Name}}', '{{textDomain}}' ),
-				'view_item'          => esc_html__( 'View {{Singular_Name}}', '{{textDomain}}' ),
-				'all_items'          => esc_html__( 'All {{Plural_Name}}', '{{textDomain}}' ),
-				'search_items'       => esc_html__( 'Search {{Plural_Name}}', '{{textDomain}}' ),
-				'archives'           => esc_html__( '{{Singular_Name}} Archives', '{{textDomain}}' ),
-				'not_found'          => esc_html__( 'No {{plural_name}} found.', '{{textDomain}}' ),
-				'not_found_in_trash' => esc_html__( 'No {{plural_name}} found in trash.', '{{textDomain}}' ),
+				'name'               => esc_html_x( '{{PluralName}}', 'post type general name', '{{textDomain}}' ),
+				'singular_name'      => esc_html_x( '{{SingularName}}', 'post type singular name', '{{textDomain}}' ),
+				'menu_name'          => esc_html_x( '{{PluralName}}', 'admin menu', '{{textDomain}}' ),
+				'name_admin_bar'     => esc_html_x( '{{SingularName}}', 'add new on admin bar', '{{textDomain}}' ),
+				'add_new_item'       => esc_html__( 'Add New {{SingularName}}', '{{textDomain}}' ),
+				'new_item'           => esc_html__( 'New {{SingularName}}', '{{textDomain}}' ),
+				'edit_item'          => esc_html__( 'Edit {{SingularName}}', '{{textDomain}}' ),
+				'view_item'          => esc_html__( 'View {{SingularName}}', '{{textDomain}}' ),
+				'all_items'          => esc_html__( 'All {{PluralName}}', '{{textDomain}}' ),
+				'search_items'       => esc_html__( 'Search {{PluralName}}', '{{textDomain}}' ),
+				'archives'           => esc_html__( '{{SingularName}} Archives', '{{textDomain}}' ),
+				'not_found'          => esc_html__( 'No {{pluralName}} found.', '{{textDomain}}' ),
+				'not_found_in_trash' => esc_html__( 'No {{pluralName}} found in trash.', '{{textDomain}}' ),
 			],
 			'public'       => true,
 			'menu_icon'    => 'dashicons-admin-post',
@@ -54,7 +54,7 @@ class {{PluralName}} {
 				'revisions',
 			],
 			'show_in_rest' => true,
-            'rest_base'    => '{{_plural_name_}}',
+			'rest_base'    => '{{restBase}}',
 		];
 
 		$args = apply_filters( 'post_type_args-' . self::POST_TYPE, $args );
@@ -64,4 +64,4 @@ class {{PluralName}} {
 
 }
 
-{{PluralName}}::initialize();
+{{className}}::initialize();

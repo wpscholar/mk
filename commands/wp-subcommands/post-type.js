@@ -1,73 +1,144 @@
+const _ = require('lodash');
 const inquirer = require('inquirer');
+const path = require('path');
 const plural = require('pluralize').plural;
 const singular = require('pluralize').singular;
 const untildify = require('untildify');
-const _ = require('lodash');
 
 const util = require('../../utilities.js');
 
-exports.command = 'post-type <name>';
+exports.command = 'post-type';
+
 exports.desc = 'Create a new WordPress post type';
+
 exports.builder = {
-    name: {
-        describe: 'Post type name',
+    className: {
+        alias: 'class',
+        describe: 'PHP class name',
+    },
+    destination: {
+        alias: 'dest',
+        describe: 'Path to where the new file will be created',
+        default: '.'
     },
     namespace: {
-        alias: 'n',
-        describe: 'PHP file namespace',
-        default: false,
+        alias: 'ns',
+        describe: 'PHP namespace',
     },
-    prefix: {
-        alias: 'p',
+    postTypeName: {
+        alias: 'name',
+        describe: 'The proper name for the post type',
+    },
+    postTypePrefix: {
+        alias: 'prefix',
         describe: 'Prefix for the internal post type name',
-        default: false,
     },
-    templatePath: {
-        alias: 'path',
-        describe: 'Path to the template to be used',
+    'source': {
+        alias: 'src',
+        describe: 'Path to the template to be used'
     },
     textDomain: {
-        alias: 't',
+        alias: 'td',
         describe: 'Translation text domain',
-        default: 'text-domain',
     },
 };
 
 exports.handler = function (argv) {
 
-    let templatePath = `${__dirname}/templates/post-type.php`;
+    console.log(argv);
 
-    if(! argv.templatePath) {
-        if(argv.paths && argv.paths.postType) {
-            templatePath = argv.paths.postType;
+    let source = `${__dirname}/templates/post-type.php`;
+
+    if(argv.source) {
+        source = path.resolve( process.cwd(), untildify(argv.source) );
+    }
+
+    if(! argv.source && argv.config) {
+        if(argv.paths && argv.paths.wp && argv.paths.wp.postType) {
+            source = path.resolve( path.dirname(argv.config), untildify( argv.paths.wp.postType ) );
         }
     }
 
-    const data = {
-        namespace: argv.namespace,
-        postTypePrefix: argv.prefix,
-        textDomain: argv.textDomain,
-        Singular_Name: _.startCase( singular(argv.name) ),
-        singular_name: _.lowerCase( singular(argv.name) ),
-        _singular_name_: _.kebabCase( singular(argv.name) ),
-        SingularName: util.pascalCase( singular(argv.name) ),
-        singularName: _.camelCase( singular(argv.name) ),
-        Plural_Name: _.startCase( plural(argv.name) ),
-        plural_name: _.lowerCase( plural(argv.name) ),
-        _plural_name_: _.kebabCase( plural(argv.name) ),
-        PluralName: util.pascalCase( plural(argv.name) ),
-        pluralName: _.camelCase( plural(argv.name) ),
-    };
+    const prompts = [
+        {
+            name: 'postTypePrefix',
+            message: 'What is the prefix for the post type?',
+            when: ! Boolean(argv.postTypePrefix)
+        },
+        {
+            name: 'postTypeName',
+            message: 'What is the name of the post type?',
+            filter: input => singular( _.kebabCase(input) ),
+            validate: input => Boolean(input),
+            when: ! Boolean(argv.postTypeName)
+        },
+        {
+            name: 'textDomain',
+            message: 'What is the text domain?',
+            validate: input => Boolean(input),
+            when: ! Boolean(argv.textDomain)
+        },
+        {
+            name: 'namespace',
+            message: 'What is the PHP namespace?',
+            when: ! Boolean(argv.namespace)
+        },
+        {
+            name: 'className',
+            message: 'What is the PHP class name?',
+            default: ({namespace = argv.namespace, postTypeName = argv.postTypeName}) => {
+                let className = '';
+                if( namespace ) {
+                    className = util.pascalCase( plural(postTypeName) );
+                }
+                return className;
+            },
+            validate: input => Boolean(input),
+            when: ! Boolean(argv.className)
+        }
+    ];
 
-    const src = untildify(templatePath);
-    const dest = `./${data.PluralName}.php`;
+    inquirer
+        .prompt(prompts)
+        .then(
+            ({
+                className = argv.className,
+                namespace = argv.namespace,
+                postTypeName = argv.postTypeName,
+                postTypePrefix = argv.postTypePrefix,
+                textDomain = argv.textDomain
+            }) => {
 
-    if(util.fileExists(dest)) {
-        util.throwError('File already exists.');
-    }
+            postTypeName = singular( _.kebabCase(postTypeName) );
 
-    util.scaffold(src, dest, data);
+            const data = {
+                className,
+                namespace,
+                PluralName: _.startCase( plural(postTypeName) ),
+                pluralName: _.lowerCase( plural(postTypeName) ),
+                postTypeName: `${postTypePrefix}${postTypeName}`,
+                restBase: _.kebabCase( plural(postTypeName) ),
+                SingularName: _.startCase( singular(postTypeName) ),
+                singularName: _.lowerCase( singular(postTypeName) ),
+                textDomain,
+            };
 
-    util.logSuccess(`Created ${data.Singular_Name} post type in ./${data.PluralName}.php`);
+            let destination = path.resolve( process.cwd(), untildify( argv.destination ) );
+
+            if( util.dirExists(destination) && util.isDir(destination) ) {
+                destination = path.join(destination, `${data.className}.php`);
+            }
+
+            if( util.fileExists(destination) ) {
+                util.throwError('File already exists.');
+            }
+
+            util.scaffold(source, destination, data);
+
+            util.logSuccess(`Created ${data.postTypeName} post type in ${path.relative(process.cwd(), destination)}`);
+
+        },
+        () => util.throwError('It looks like something went wrong. Please try again.')
+    );
 
 };
