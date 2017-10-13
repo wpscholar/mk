@@ -9,7 +9,7 @@ var argv = yargs
     .default('config', '/dev/null', 'Path to configuration file')
     .config('config', function(configPath) {
         if( configPath === '/dev/null' ) {
-            configPath = findUp.sync(['.teg.json']);
+            configPath = findUp.sync(['.mkconfig', 'mkconfig.json']);
         }
         return configPath ? JSON.parse(fs.readFileSync(configPath)) : {config: ''};
     })
