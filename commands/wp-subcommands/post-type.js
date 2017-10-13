@@ -29,7 +29,7 @@ exports.builder = {
         alias: 'name',
         describe: 'The proper name for the post type',
     },
-    postTypePrefix: {
+    slugPrefix: {
         alias: 'prefix',
         describe: 'Prefix for the internal post type name',
     },
@@ -45,8 +45,6 @@ exports.builder = {
 
 exports.handler = function (argv) {
 
-    console.log(argv);
-
     let source = `${__dirname}/templates/post-type.php`;
 
     if(argv.source) {
@@ -61,9 +59,9 @@ exports.handler = function (argv) {
 
     const prompts = [
         {
-            name: 'postTypePrefix',
+            name: 'slugPrefix',
             message: 'What is the prefix for the post type?',
-            when: ! Boolean(argv.postTypePrefix)
+            when: ! Boolean(argv.slugPrefix)
         },
         {
             name: 'postTypeName',
@@ -87,9 +85,12 @@ exports.handler = function (argv) {
             name: 'className',
             message: 'What is the PHP class name?',
             default: ({namespace = argv.namespace, postTypeName = argv.postTypeName}) => {
-                let className = '';
+                const name = util.pascalCase( plural(postTypeName) );
+                let className = `${name}PostType`;
                 if( namespace ) {
-                    className = util.pascalCase( plural(postTypeName) );
+                    className = name;
+                } else if(argv.classPrefix) {
+                    className = `${argv.classPrefix}${name}PostType`;
                 }
                 return className;
             },
@@ -105,28 +106,30 @@ exports.handler = function (argv) {
                 className = argv.className,
                 namespace = argv.namespace,
                 postTypeName = argv.postTypeName,
-                postTypePrefix = argv.postTypePrefix,
+                slugPrefix = argv.slugPrefix,
                 textDomain = argv.textDomain
             }) => {
 
-            postTypeName = singular( _.kebabCase(postTypeName) );
+            const name = singular( _.kebabCase(postTypeName) );
+            postTypeName = `${slugPrefix}${name}`;
 
             const data = {
                 className,
                 namespace,
-                PluralName: _.startCase( plural(postTypeName) ),
-                pluralName: _.lowerCase( plural(postTypeName) ),
-                postTypeName: `${postTypePrefix}${postTypeName}`,
-                restBase: _.kebabCase( plural(postTypeName) ),
-                SingularName: _.startCase( singular(postTypeName) ),
-                singularName: _.lowerCase( singular(postTypeName) ),
+                PluralName: _.startCase( plural(name) ),
+                pluralName: _.lowerCase( plural(name) ),
+                postTypeName,
+                restBase: _.kebabCase( plural(name) ),
+                SingularName: _.startCase( singular(name) ),
+                singularName: _.lowerCase( singular(name) ),
                 textDomain,
             };
 
             let destination = path.resolve( process.cwd(), untildify( argv.destination ) );
 
             if( util.dirExists(destination) && util.isDir(destination) ) {
-                destination = path.join(destination, `${data.className}.php`);
+                const file = `${data.className}.php`;
+                destination = path.join(destination, file);
             }
 
             if( util.fileExists(destination) ) {
