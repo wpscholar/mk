@@ -63,7 +63,7 @@ exports.handler = function (argv) {
             message: 'What is the name of the model?',
             filter: input => util.pascalCase( singular(input) ),
             validate: input => Boolean(input),
-            when: ! Boolean(argv.taxonomyName)
+            when: ! Boolean(argv.modelName)
         },
         {
             name: 'namespace',

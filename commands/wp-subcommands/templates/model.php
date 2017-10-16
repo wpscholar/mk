@@ -7,7 +7,7 @@ namespace {{namespace}};
 use wpscholar\WordPress\PostModelBase;
 
 /**
- * Class Event
+ * Class {{className}}
  {{#namespace}}
   *
   * @package {{namespace}}
@@ -18,7 +18,7 @@ class {{className}} extends PostModelBase {
     const POST_TYPE = '{{postType}}';
 
 	/**
-	 * Get the post ID
+	 * Get the ID
 	 *
 	 * @return int
 	 */
