@@ -1,8 +1,8 @@
 {
-    "namespace": "CobbRealtors",
-    "classPrefix": "CobbRealtors_",
-    "functionPrefix": "cobb_",
-    "slugPrefix": "cobb-",
-    "metaPrefix": "_cobb_",
-    "textDomain": "cobb-realtors"
+  "namespace": "CobbRealtors",
+  "classPrefix": "CobbRealtors_",
+  "functionPrefix": "cobb_",
+  "slugPrefix": "cobb-",
+  "metaPrefix": "_cobb_",
+  "textDomain": "cobb-realtors"
 }
