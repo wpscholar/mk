@@ -23,7 +23,7 @@
     "fs": "0.0.1-security",
     "fs-extra": "^6.0.0",
     "inquirer": "^5.2.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.15",
     "mustache": "^2.3.0",
     "pluralize": "^7.0.0",
     "untildify": "^3.0.2",
