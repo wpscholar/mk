@@ -27,6 +27,6 @@
     "mustache": "^2.3.0",
     "pluralize": "^7.0.0",
     "untildify": "^3.0.2",
-    "yargs": "^9.0.1"
+    "yargs": "^17.7.2"
   }
 }
